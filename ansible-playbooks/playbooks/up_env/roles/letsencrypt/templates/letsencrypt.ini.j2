@@ -1,0 +1,23 @@
+{% if letsencrypt.standalone_port is defined %}
+
+authenticator = standalone
+standalone-supported-challenges = http-01
+http-01-port = {{ letsencrypt.standalone_port }}
+
+{% elif letsencrypt.docroot is defined %}
+
+authenticator = webroot
+webroot-path = {{ letsencrypt.docroot }}
+
+{% endif %}
+
+# generate certificates for the specified domains.
+domains = {{ letsencrypt.domains | join(',') }}
+
+# register certs with the following email address
+email = {{ letsencrypt.email }}
+
+# use a 4096 bit RSA key instead of 2048
+rsa-key-size = 4096
+
+config-dir = {{ letsencrypt.config_dir }}

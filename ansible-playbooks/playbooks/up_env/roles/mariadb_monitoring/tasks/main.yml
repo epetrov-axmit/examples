@@ -1,0 +1,8 @@
+---
+- name: create MariaDB local user for statistics fetching
+  mysql_user: name={{ mariadb_stat_user }} password={{ mariadb_stat_password }} priv="*.*:USAGE,REPLICATION CLIENT" state=present
+
+- name: configure collectd mysql plugin
+  template: src=mysql.conf.j2 dest=/etc/collectd/collectd.conf.d/mysql.conf
+  notify: restart collectd
+  

@@ -1,0 +1,29 @@
+---
+- name: Set permissions on socket - owner
+  lineinfile: "dest=/etc/php/7.0/fpm/pool.d/www.conf state=present regexp='^;?listen.owner' line='listen.owner = www-data'"
+
+- name: Set permissions on socket - group
+  lineinfile: "dest=/etc/php/7.0/fpm/pool.d/www.conf state=present regexp='^;?listen.group' line='listen.group = www-data'"
+
+- name: Set permissions on socket - mode
+  lineinfile: "dest=/etc/php/7.0/fpm/pool.d/www.conf state=present regexp='^;?listen.mode' line='listen.mode = 0660'"
+  notify: restart php7.0-fpm
+
+- name: Set ini file settgings
+  ini_file: dest=/etc/php/7.0/fpm/php.ini section="{{ item.section }}" option="{{ item.option }}" value="{{ item.value }}" state="{{ item.state }}"
+  with_items:
+    - { section: "Date", option: "date.timezone", value: "{{ server.timezone }}", state: present }
+    - { section: "PHP", option: "display_errors", value: "On", state: present }
+    - { section: "PHP", option: "display_startup_errors", value: "On", state: present }
+    - { section: "PHP", option: "error_reporting", value: "E_ALL & ~E_USER_DEPRECATED", state: present }
+    - { section: "PHP", option: "max_input_vars", value: 2048, state: present }
+    - { section: "mail function", option: "SMTP", value: 'localhost', state: absent }
+    - { section: "mail function", option: "smtp_port", value: 25, state: absent }
+    - { section: "mail function", option: "sendmail_path", value: '"/usr/bin/php {{ php.settings.sendmail.dest }}"', state: present }
+  notify: restart php7.0-fpm
+
+- name: Ensure sendmail script is added
+  template: dest="{{ php.settings.sendmail.dest }}" src=sendmail.php.j2
+
+- name: Ensure mails path
+  file: path="{{ php.settings.sendmail.mails_dir }}" state=directory mode=0777

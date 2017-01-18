@@ -1,0 +1,16 @@
+when = {{when}}
+
+options = --no-encryption
+testconnect = no
+
+[gpg]
+password = does_not_really_used_but_must_be_set
+
+[source]
+include = {{ mariadb_backup.dump_dir }}
+
+[dest]
+increments = {{ increments }}
+keep = {{ keep }}
+keepincroffulls = {{ keep_incr_of_fulls | default(all) }}
+desturl = {{ mariadb_backup.s3_bucket_url }}/{{ ansible_hostname }}/{{ period_name }}

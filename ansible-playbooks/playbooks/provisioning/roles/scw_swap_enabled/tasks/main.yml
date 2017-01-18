@@ -1,0 +1,18 @@
+---
+- block:
+    - name: fix the SCW swapfile service file
+      ini_file:
+        dest: /etc/systemd/system/scw-swapfile.service
+        section: Service
+        option: RemainAfterExit
+        value: "yes"
+        no_extra_spaces: yes
+      register: service_modified
+        
+    - name: reload systemd
+      shell: systemctl daemon-reload
+      when: service_modified.changed
+        
+    - name: enable and start swapfile creation service
+      service: name=scw-swapfile state=started enabled=yes
+  when: ansible_service_mgr == "systemd"

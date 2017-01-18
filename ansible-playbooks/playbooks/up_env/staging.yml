@@ -1,0 +1,27 @@
+---
+- hosts: [staging]
+  become: yes
+  vars_files:
+    - "vars/secrets.yml"
+  vars:
+    letsencrypt:
+      docroot: /srv/letsencrypt/
+      config_dir: /etc/letsencrypt
+      vhostid: example
+      email: webmaster@axmit.com
+      domains:
+        - stage.example.com
+      exec_after_renew: >
+        systemctl reload nginx.service
+      
+  roles:
+    - { role: letsencrypt, tags: ['webserver'] }
+    - { role: nginx, tags: ['webserver'] }
+    - php
+    - phpcli
+    - phpfpm
+    - mariadb
+    - memcached
+    - { role: mariadb_monitoring, tags: ['monitoring'] }
+    - { role: webserver_monitoring, tags: ['monitoring'] }
+    - { role: deploy_user, tags: ['deploy'] }

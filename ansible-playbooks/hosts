@@ -1,0 +1,30 @@
+[scaleway]
+stgmaster ansible_ssh_host=127.0.0.1
+
+[digital_ocean]
+haproxy1 ansible_ssh_host=127.0.0.1
+app1 ansible_ssh_host=127.0.0.1
+memcached1 ansible_ssh_host=127.0.0.1
+db1 ansible_ssh_host=127.0.0.1
+
+[production:children]
+haproxy
+application
+memcached
+database
+
+[haproxy]
+haproxy1
+
+[application]
+app1
+
+[memcached]
+memcached1
+
+[database]
+db1
+
+[staging]
+stgmaster
+

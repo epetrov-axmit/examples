@@ -1,0 +1,23 @@
+---
+- hosts: all
+  gather_facts: no
+  become: yes
+  roles:
+    - ansible_ready
+
+- hosts: all
+  become: yes  
+  vars_files:
+    - vars/admins.yml
+  roles:
+    - common_config
+    - authorize_admins
+    - { role: hardened_sshd, tags: ['shell', 'security', 'ssh'] }
+    - { role: ufw_enabled, tags: ['firewall', 'security'] }
+    - { role: monitoring_base, tags: ['monitoring'] }
+    
+- hosts: scaleway
+  become: yes
+  gather_facts: no
+  roles:
+    - scw_swap_enabled

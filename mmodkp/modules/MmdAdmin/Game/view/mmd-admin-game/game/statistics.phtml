@@ -1,0 +1,49 @@
+<?php
+
+use MmdAdmin\Game\Statistics\Dto\GamePopulationTo;
+use MmdAdmin\Game\Statistics\Form\GameStatisticsFilterForm;
+use Zend\Paginator\Paginator;
+
+$title = $this->translate('Статистика по играм');
+$this->headTitle($title);
+
+/** @var GameStatisticsFilterForm $filterForm */
+/** @var Paginator|GamePopulationTo[] $paginator */
+
+
+$filterForm = $this->filter;
+
+?>
+
+<div class="block-area">
+    <h3 class="block-title"><?= $title ?></h3>
+    <?= $this->partial('mmd-admin-game/game/partial/statistics-filter-form', ['form' => $filterForm]); ?>
+    <div class="clearfix m-t-10 m-b-10"></div>
+    <div class="table-responsive">
+        <table class="table tile">
+            <thead>
+            <tr>
+                <th>Игра</th>
+                <th>Добавлена</th>
+                <th>Количество гильдий</th>
+                <th>Количество персонажей</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($paginator as $paginated) : ?>
+                <tr>
+                    <td><?php echo $paginated->getGame()->getName(); ?></td>
+                    <td><?php echo $paginated->getGame()->getCreatedOn()->format('d.m.y, H:i'); ?></td>
+                    <td><?php echo $paginated->getGuildsCount(); ?></td>
+                    <td><?php echo $paginated->getMembersCount(); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?= $this->paginationControl(
+            $paginator,
+            'Sliding',
+            'pagination/default'
+        ); ?>
+    </div>
+</div>

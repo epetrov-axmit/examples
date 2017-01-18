@@ -1,0 +1,50 @@
+---
+server:
+  install: '1'
+  packages: [vim, git, htop, build-essential, memcached]
+  timezone: Europe/Moscow
+  locale: ru_RU.UTF-8
+vagrant_local:
+  install: '1'
+  vm: { base_box: xenial64, hostname: mmodkp.local, ip: 10.0.100.101, memory: '1024', sharedfolder: ./, syncType: nfs }
+nginx:
+  install: '1'
+  docroot: /vagrant/public
+  servername: mmodkp.local
+mariadb:
+  install: '1'
+  root_password: ''
+  database: mmodkp
+  user: mmodkp
+  password: ''
+  dump: ''
+php:
+  install: '1'
+  packages: [php7.0-cli, php7.0-intl, php7.0-mcrypt, php7.0-mbstring, php7.0-curl, php7.0-common, php7.0-gd, php7.0-mysql, php7.0-zip, php-pear, php-memcached]
+  settings:
+    session:
+      name: MMODKPSESS
+      save_handler: memcached
+      save_path: 127.0.0.1:11211
+      cookie_domain: mmodkp.local
+    opcache:
+      enabled: 0
+      revalidate_freq: 1
+    sendmail:
+      dest: /usr/share/php/sendmail.php
+      mails_dir: /vagrant/data/cache/mails
+xdebug:
+  install: '1'
+  settings:
+    remote_enable: On
+    remote_autostart: On
+    remote_connect_back: On
+    remote_handler: dbgp
+    remote_host: "127.0.0.1"
+    remote_port: 9000
+    remote_mode: req
+    idekey: PHPSTORM
+composer:
+  install: '1'
+  local_vars: "vars/composer.local.yml"
+

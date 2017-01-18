@@ -1,0 +1,24 @@
+server {
+        listen 127.0.0.1:80;
+        listen [::1]:80;
+        server_name localhost;
+
+	access_log  off;	
+
+        location / {
+		deny all;
+        }
+
+	location /status/nginx {
+		stub_status on;
+        }
+
+	location /status/php-fpm {
+                include fastcgi_params;
+
+                fastcgi_param  SCRIPT_FILENAME  /status;
+		fastcgi_param  SCRIPT_NAME  /status;
+		
+		fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+	}
+}

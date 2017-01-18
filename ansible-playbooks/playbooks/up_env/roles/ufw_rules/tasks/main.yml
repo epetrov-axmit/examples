@@ -1,0 +1,4 @@
+---
+- name: allow incoming connections in firewall
+  ufw: direction=in rule=allow port="{{ item.port | default(item)}}" proto="{{ item.proto | default('tcp') }}"
+  with_items: "{{ allowed_ports }}"

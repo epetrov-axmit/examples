@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: no  
+  vars_files:
+    - vars/admins.yml
+  roles:
+    - authorize_admins

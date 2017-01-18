@@ -1,0 +1,10 @@
+---
+- hosts: all
+  sudo: true
+  vars_files:
+    - vars/all.yml
+  tasks:
+    - name: update apt cache
+      apt: update_cache=yes
+  roles:
+    - php

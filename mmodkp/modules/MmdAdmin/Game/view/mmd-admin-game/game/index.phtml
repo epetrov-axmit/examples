@@ -1,0 +1,84 @@
+<?php
+
+use Mmd\Game\Form\GameFilterForm;
+
+$title = $this->translate('Список игр');
+$this->headTitle($title);
+
+/** @var GameFilterForm $filterForm */
+$filterForm = $this->filter;
+$filterForm->setAttribute('action', $this->url('admin/game'));
+$filterForm->prepare();
+?>
+<div class="block-area">
+    <h3 class="block-title"><?= $title; ?></h3>
+    <a href="<?= $this->url('admin/game', ['action' => 'create']); ?>" class="btn btn-alt pull-right">
+        <?= $this->translate('Добавить игру'); ?>
+    </a>
+    <a href="<?= $this->url('admin/game', ['action' => 'statistics']); ?>" class="btn btn-alt pull-right m-r-5">
+        <?= $this->translate('Статистика'); ?>
+    </a>
+    <?= $this->partial('mmd-admin-game/game/partial/filter-form', ['form' => $filterForm]); ?>
+    <?= $this->flashMessenger()->render('admin-games-list', ['alert', 'alert-success']); ?>
+    <?php if ($this->games->getTotalItemCount() == 0) : ?>
+        <div class="alert alert-warning"><?= $this->translate('Игр не найдено'); ?></div>
+    <?php else : ?>
+        <div class="table-responsive">
+            <table class="table tile">
+                <thead>
+                <tr>
+                    <th>Лого</th>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Алиас</th>
+                    <th>Видимость</th>
+                    <th>Добавлена</th>
+                    <th class="text-right">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                /** @var \Mmd\Game\Entity\Game $game */
+                foreach ($this->games as $game) :
+                    ?>
+                    <tr>
+                        <td>
+                            <?php if ($game->getLogo()) : ?>
+                                <?= $this->mmdImageThumbnail($game->getLogo())->icon(['title' => $game->getName()]); ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= $game->getId(); ?></td>
+                        <td><?= $this->escapeHtml($game->getName()); ?></td>
+                        <td><?= $this->escapeHtml($game->getAlias()); ?></td>
+                        <td><?= $this->translate($game->isPublic()) ? 'Открытая' : 'Скрытая'; ?></td>
+                        <td><?= $game->getCreatedOn()->format('d.m.y, H:i'); ?></td>
+                        <td class="text-right">
+                            <?= $this->mmdActionControl(
+                                'admin/game',
+                                $this->translate('Редактировать'),
+                                ['action' => 'update', 'id' => $game->getId()],
+                                ['btn', 'btn-alt', 'btn-xs']
+                            ); ?>
+                            <?= $this->mmdActionControl(
+                                'admin/game',
+                                $this->translate('Удалить'),
+                                ['action' => 'remove', 'id' => $game->getId()],
+                                ['btn', 'btn-alt', 'btn-xs', 'pull-right'],
+                                null,
+                                [
+                                    'onclick' => 'return confirm(\''
+                                        . $this->translate('Точно удалить игру? Это действие нельзя будет отменить.')
+                                        . '\');',
+                                ]
+
+                            )
+                            ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+    <?= $this->paginationControl($this->games, 'Sliding', 'pagination/default'); ?>
+</div>

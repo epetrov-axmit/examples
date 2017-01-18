@@ -1,0 +1,28 @@
+---
+- name: Install Nginx
+  sudo: yes
+  apt: pkg=nginx state=latest
+
+- name: stat nginx default backed up
+  stat: path=/etc/nginx/nginx.conf.default
+  register: nginx_conf_default
+
+- name: Backup default Nginx config
+  command: mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.default
+  when: nginx_conf_default.stat.exists
+
+- name: Change default nginx config
+  sudo: yes
+  template: src=nginx.conf.tpl dest=/etc/nginx/nginx.conf
+  notify: restart nginx
+
+- name: Change default nginx site
+  sudo: yes
+  template: src=default.tpl dest=/etc/nginx/sites-available/default
+  notify: restart nginx
+
+- name: Change www dir permissions
+  file: path=/var/www state=directory owner=deploy group=sudo
+
+- include: letsencrypt.yml
+  when: letsencrypt is defined

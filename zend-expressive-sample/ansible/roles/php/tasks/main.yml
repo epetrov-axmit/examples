@@ -1,0 +1,16 @@
+- name: Install {{ php.main }}
+  sudo: yes
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - "{{ php.main }}"
+    - "{{ php.fpm }}"
+
+- name: Install PHP Packages
+  sudo: yes
+  apt: pkg={{ item }} state=latest
+  with_items: php.packages
+  when: php.packages is defined
+
+- name: Install Composer
+  sudo: yes
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer creates=/usr/local/bin/composer

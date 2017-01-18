@@ -1,0 +1,10 @@
+---
+- hosts: [application]
+  become: yes
+  roles:
+    - nginx
+    - php
+    - phpfpm
+    - { role: monitoring_base, tags: ['monitoring'] }
+    - { role: webserver_monitoring, tags: ['monitoring'] }
+    - { role: deploy_user, tags: ['deploy'] }

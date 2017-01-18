@@ -1,0 +1,16 @@
+---
+- name: Install xDebug
+  sudo: yes
+  apt: pkg=php-xdebug state=latest
+
+- name: Apply config
+  ini_file:
+    dest: /etc/php/7.0/mods-available/xdebug.ini
+    section: "xdebug"
+    option: "xdebug.{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_dict: "{{ xdebug.settings }}"
+  notify:
+    - restart php7.0-fpm
+    - restart nginx

@@ -1,0 +1,21 @@
+<?php
+
+use Mmd\Game\Form\GameEditForm;
+
+$title = $this->translate('Добавить игру');
+$this->headTitle($title);
+
+/** @var GameEditForm $form */
+$form = $this->form;
+$form->setAttribute('action', $this->url('admin/game', ['action' => 'create']));
+$form->prepare();
+
+?>
+
+<div class="col-md-4 col-md-offset-4">
+    <?php if (!empty($this->success)) : ?>
+        <div class="alert alert-success"><?php echo $this->success; ?></div>
+    <?php endif; ?>
+    <?php echo $this->adminGameEditForm($form); ?>
+</div>
+

@@ -1,0 +1,12 @@
+---
+- name: stat haproxy default backed up
+  stat: path=/etc/haproxy/haproxy.cfg.default
+  register: haproxy_conf_default
+
+- name: Backup default Haproxy config
+  command: mv /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.default
+  when: haproxy_conf_default.stat.exists
+
+- name: Change default haproxy config
+  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+  notify: restart haproxy

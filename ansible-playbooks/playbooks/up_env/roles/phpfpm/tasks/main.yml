@@ -1,0 +1,41 @@
+---
+- name: Install php7.0-fpm
+  sudo: yes
+  apt: pkg=php7.0-fpm state=latest
+
+- name: Configure session variables
+  ini_file:
+    dest: /etc/php/7.0/fpm/php.ini
+    section: Session
+    option: "session.{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_dict: "{{ php.settings.session }}"
+  notify: restart php-fpm
+
+- stat: path=/etc/php/7.0/fpm/php.ini
+  register: phpfpm
+
+- name: Set ini file settgings
+  ini_file: dest=/etc/php/7.0/fpm/php.ini section="{{ item.section }}" option="{{ item.option }}" value="{{ item.value }}" state="{{ item.state }}"
+  with_items:
+    - { section: "Date", option: "date.timezone", value: "{{ server.timezone }}", state: present }
+    - { section: "PHP", option: "display_errors", value: "Off", state: present }
+    - { section: "PHP", option: "display_startup_errors", value: "Off", state: present }
+    - { section: "PHP", option: "error_reporting", value: "E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED", state: present }
+    - { section: "PHP", option: "max_input_vars", value: 2048, state: present }
+  notify: restart php-fpm
+
+- name: stat php-fpm default backed up
+  stat: path=/etc/php/7.0/fpm/pool.d/www.conf.default
+  register: fpm_conf_default
+
+- name: Backup default FPM config
+  command: mv /etc/php/7.0/fpm/pool.d/www.conf /etc/php/7.0/fpm/pool.d/www.conf.default
+  when: fpm_conf_default.stat.exists
+
+- name: Place FPM config
+  sudo: yes
+  template: src=www.conf.tpl dest=/etc/php/7.0/fpm/pool.d/www.conf
+  notify: restart php-fpm
+

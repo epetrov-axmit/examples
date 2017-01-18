@@ -1,0 +1,17 @@
+---
+- name: create admin users
+  user:
+    name: "{{ item.name }}"
+    state: present
+    append: yes
+    groups: sudo
+    password: "{{ item.password }}"
+    shell: /bin/bash
+  with_items:
+    - "{{ admins }}"
+    
+- name: "authorize each admin's public key"
+  authorized_key: "user={{ item.0.name }} key={{ item.1 }}"
+  with_subelements:
+    - "{{ admins }}"
+    - authorized_keys

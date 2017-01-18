@@ -1,0 +1,8 @@
+---
+- name: ensure there is the PHP interpreter
+  apt: pkg=php-cli state=present
+
+- name: install composer
+  script: "{{ role_path }}/files/composer_install.sh --install-dir=/usr/local/bin --filename=composer"
+  args:
+    creates: /usr/local/bin/composer

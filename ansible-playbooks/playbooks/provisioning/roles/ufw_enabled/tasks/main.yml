@@ -1,0 +1,9 @@
+---
+- name: ensure UFW is installed
+  apt: pkg=ufw state=present
+
+- name: allow SSH connections and enable UFW
+  ufw: rule=allow name=OpenSSH state=enabled
+
+- name: deny all other inbound connections
+  ufw: direction=incoming policy=reject

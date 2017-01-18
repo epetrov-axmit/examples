@@ -1,0 +1,8 @@
+when = hourly
+
+databases   = {% for db in mariadb_backup.databases %}{{db}} {% endfor %}
+
+backupdir   = {{ mariadb_backup.dump_dir }}
+hotcopy     = no
+sqldump     = yes
+compress    = yes

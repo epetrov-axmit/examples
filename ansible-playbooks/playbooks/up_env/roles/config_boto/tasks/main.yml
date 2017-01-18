@@ -1,0 +1,5 @@
+- name: install Python AWS interface (boto)
+  apt: pkg=python-boto state=latest
+
+- name: configure AWS credentials for boto
+  template: src=boto.cfg.j2 dest=/etc/boto.cfg mode=0600

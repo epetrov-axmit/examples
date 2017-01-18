@@ -1,0 +1,23 @@
+#!/usr/bin/php
+<?php
+
+$MailDir = "{{ php.settings.sendmail.mails_dir }}";
+
+$data = '';
+$line = 'xxx';
+
+$f = fopen('php://stdin', 'r');
+while( !feof($f) AND ($line!='') ) {
+	$line = fgets($f,255);
+	$data .= $line;
+}
+fclose($f);
+
+$i = 0;
+$addon = '';
+while ( file_exists( $fname = ($MailDir.'/'.date('Y-m-d-H-i-s').$addon.'.eml') )) {
+	$i++;
+	$addon = '-'.$i;
+}	
+
+file_put_contents($fname, $data);

@@ -1,0 +1,84 @@
+<?php
+
+use Mmd\Game\Form\ServerFilterForm;
+
+$title = $this->translate('Список серверов');
+$this->headTitle($title);
+
+/** @var ServerFilterForm $filterForm */
+$filterForm = $this->filter;
+$filterForm->setAttribute('action', $this->url('admin/server'));
+$filterForm->prepare();
+?>
+<div class="block-area">
+    <h3 class="block-title"><?= $title; ?></h3>
+    <div class="pull-right">
+        <a href="<?= $this->url('admin/server', ['action' => 'create']); ?>" class="btn btn-alt btn-sm pull-right">
+            <?= $this->translate('Добавить сервер'); ?>
+        </a>
+    </div>
+    <div class="clearfix m-t-10 m-b-10"></div>
+    <?= $this->partial('mmd-admin-game/server/partial/filter-form', ['form' => $filterForm]); ?>
+    <div class="clearfix m-t-10 m-b-10"></div>
+    <?= $this->flashMessenger()->render('admin-servers-list', ['alert', 'alert-success']); ?>
+    <?php if ($this->servers->getTotalItemCount() == 0) : ?>
+        <div class="alert alert-warning"><?= $this->translate('Серверов не найдено'); ?></div>
+    <?php else : ?>
+        <div class="table-responsive">
+            <table class="table tile">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>URL</th>
+                    <th>Игра</th>
+                    <th>Видимость</th>
+                    <th>Добавлена</th>
+                    <th class="text-right">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                /** @var \Mmd\Game\Entity\Server $server */
+                foreach ($this->servers as $server) :
+                    ?>
+                    <tr>
+                        <td><?= $server->getId(); ?></td>
+                        <td><?= $this->escapeHtml($server->getName()); ?></td>
+                        <td>
+                            <a href="<?= $server->getUrl(); ?>" target="_blank">
+                                <?= $this->mmdStringCut($server->getUrl(), 30); ?>
+                            </a>
+                        </td>
+                        <td><?= $this->escapeHtml($server->getGame()->getName()); ?></td>
+                        <td><?= $this->translate($server->isPublic()) ? 'Открытая' : 'Скрытая'; ?></td>
+                        <td><?= $server->getCreatedOn()->format('d.m.y, H:i'); ?></td>
+                        <td class="text-right">
+                            <?= $this->mmdActionControl(
+                                'admin/server',
+                                $this->translate('Редактировать'),
+                                ['action' => 'update', 'id' => $server->getId()],
+                                ['btn', 'btn-alt', 'btn-xs']
+                            ); ?>
+                            <?= $this->mmdActionControl(
+                                'admin/server',
+                                $this->translate('Удалить'),
+                                ['action' => 'remove', 'id' => $server->getId()],
+                                ['btn', 'btn-alt', 'btn-xs'],
+                                null,
+                                [
+                                    'onclick' => 'return confirm(\''
+                                                 . $this->translate('Точно удалить сервер? Это действие нельзя будет отменить.')
+                                                 . '\');',
+                                ]
+                            )
+                            ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+    <?= $this->paginationControl($this->servers, 'Sliding', 'pagination/default'); ?>
+</div>

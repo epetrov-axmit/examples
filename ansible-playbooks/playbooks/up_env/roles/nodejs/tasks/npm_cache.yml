@@ -1,0 +1,5 @@
+---
+- name: NPM | Install npm-cache
+  shell: npm install npm-cache -g
+  args:
+    creates: /usr/bin/npm-cache

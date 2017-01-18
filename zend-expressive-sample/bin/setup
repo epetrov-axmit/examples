@@ -1,0 +1,13 @@
+#!/usr/bin/php
+<?php
+chdir(dirname(__DIR__));
+
+$composerInstallPattern = 'curl -sS https://getcomposer.org/installer | php -- --install-dir=%s --filename=%s';
+$depsInstallPattern     = '%s/%s install --prefer-dist';
+$composer               = 'composer.phar';
+
+echo 'Installing composer.phar' . PHP_EOL;
+passthru(sprintf($composerInstallPattern, getcwd(), $composer));
+
+echo 'Installing dependencies' . PHP_EOL;
+passthru(sprintf($depsInstallPattern, getcwd(), $composer));

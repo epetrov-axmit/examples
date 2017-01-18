@@ -1,0 +1,20 @@
+---
+- name: Install php7.0
+  sudo: yes
+  apt: pkg=php7.0 state=latest
+
+- name: Install PHP Packages
+  sudo: yes
+  apt: pkg={{ item }} state=latest
+  with_items: "{{ php.packages }}"
+  when: php.packages is defined
+
+- name: Opcache config
+  ini_file:
+    dest: /etc/php/7.0/mods-available/opcache.ini
+    section: "zend opcache"
+    option: "opcache.{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_dict: "{{ php.settings.opcache }}"
+

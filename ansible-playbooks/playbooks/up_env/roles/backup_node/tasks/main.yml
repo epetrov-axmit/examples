@@ -1,0 +1,6 @@
+---
+- name: install backup tools
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - backupninja
+    - duplicity

@@ -1,0 +1,38 @@
+<?php
+
+use Epos\Dao\Criterion\Filter;
+use Mmd\Game\Form\GameFilterForm;
+
+/** @var GameFilterForm $form */
+$helper = $this->mmdDefaultForm($form);
+$form->setAttributes(['class' => 'form-columned clearfix', 'method' => 'GET', 'role' => 'form']);
+?>
+<div class="form-group row ">
+    <?= $helper->formOpen(); ?>
+        <div class="col-md-2">
+            <?= $helper->element(
+                GameFilterForm::EL_NAME,
+                [
+                    'class'       => 'form-control input-sm',
+                    'placeholder' => $form->get(GameFilterForm::EL_NAME)->getLabel(),
+                ]
+            ); ?>
+        </div>
+        <div class="col-md-2">
+            <?= $helper->element(
+                GameFilterForm::EL_ALIAS,
+                [
+                    'class'       => 'form-control input-sm',
+                    'placeholder' => $form->get(GameFilterForm::EL_ALIAS)->getLabel(),
+                ]
+            ); ?>
+        </div>
+        <div class="form-group col-md-5">
+                <?= $this->partial('partial/sortable-form-group', ['form' => $form->get(Filter::SORT_PARAMETER_NAME)]); ?>
+        </div>
+        <div class="form-group col-md-3 text-right">
+                <a href="<?= $form->getAttribute('action'); ?>" class="btn btn-sm"><?= $this->translate('Cancel'); ?></a>
+                <?= $helper->element(GameFilterForm::EL_SUBMIT, ['class' => 'btn btn-sm']); ?>
+            </div>
+        </div>
+    <?= $helper->formClose(); ?>

@@ -1,0 +1,33 @@
+---
+- name: Add MariaDB-Repository
+  sudo: yes
+  apt_repository: repo='deb http://mirror.mephi.ru/mariadb/repo/10.1/ubuntu {{ ansible_distribution_release }} main' state=present
+
+- name: Add Key for MariaDB Repository
+  sudo: yes
+  apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF1656F24C74CD1D8
+
+- name: mariadb | Install MariaDB Packages
+  sudo: yes
+  apt: pkg={{ item }} state=latest update_cache=yes
+  with_items:
+    - mariadb-server
+    - python-mysqldb
+
+- name: mariadb | Update root password for all root accounts
+  mysql_user: name=root host={{ item }} check_implicit_admin=yes password={{ mariadb.root_password }} login_user=root login_password={{ mariadb.root_password }} host_all=yes
+
+- name: mariadb | Ensure anonymous users are not in the database
+  mysql_user: name='' host={{ item }} state=absent login_user=root login_password={{ mariadb.root_password }} host_all=yes
+
+- name: mariadb | Create databases
+  mysql_db: name={{ app_db.name }} state=present login_user=root login_password={{ mariadb.root_password }}
+
+- name: mariadb | Create users
+  mysql_user: name={{ app_db.user }} host={{ mariadb.user_host }} password={{ app_db.password }} priv={{ ap_db.databases }}.*:ALL state=present login_user=root login_password={{ mariadb.root_password }}
+
+- name: allow internal connection
+  shell: sed -i "s/bind-address\s\s=\s127.0.0.1/bind-address = 0.0.0.0/g" /etc/mysql/my.cnf
+
+- name: restart
+  service: name=mysql state=restarted

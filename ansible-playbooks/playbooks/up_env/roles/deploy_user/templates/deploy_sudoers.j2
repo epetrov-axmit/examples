@@ -1,0 +1,7 @@
+{% if deploy_user.permitted_commands is defined and deploy_user.permitted_commands %}
+
+Cmnd_Alias DEPLOY_COMMANDS = {{ deploy_user.permitted_commands | join(', ') }}
+
+{{ deploy_user.login }} ALL=(ALL:ALL) NOPASSWD: DEPLOY_COMMANDS
+
+{% endif %}

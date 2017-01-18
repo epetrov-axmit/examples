@@ -1,0 +1,9 @@
+---
+- hosts: [database]
+  become: yes
+  vars_files:
+    - "vars/secrets.yml"
+  roles:
+    - mariadb
+    - { role: mariadb_backup, tags: ['backup'] }
+    - { role: mariadb_monitoring, tags: ['monitoring'] }

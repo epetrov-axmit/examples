@@ -1,0 +1,5 @@
+---
+composer:
+  settings:
+    cache_dir: ~/.composer-cache
+    github_token:

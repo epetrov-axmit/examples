@@ -1,0 +1,12 @@
+---
+- name: Add repo key
+  apt_key: keyserver=keyserver.ubuntu.com id=68576280
+
+- name: Add NodeJS repository
+  apt_repository: repo="deb https://deb.nodesource.com/node_6.x {{ ansible_distribution_release }} main" state=present
+
+- name: Installing NodeJS
+  apt: pkg=nodejs state=latest update_cache=yes
+
+- include: bower.yml
+- include: npm_cache.yml

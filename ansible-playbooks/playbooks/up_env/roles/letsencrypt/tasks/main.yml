@@ -1,0 +1,44 @@
+---
+- set_fact:
+    letsencrypt:
+      certs_dir: "{{ letsencrypt.config_dir }}/live/{{ letsencrypt.domains[0] }}"
+      config: "{{ letsencrypt.config_dir }}/{{ letsencrypt.vhostid }}.ini"
+      issue_cmd: >
+        letsencrypt certonly
+        --agree-tos --non-interactive
+        {%- if letsencrypt.test -%} --test-cert {% endif %}
+        --config "{{ letsencrypt.config_dir }}/{{ letsencrypt.vhostid }}.ini"
+    letsencrypt_stage: 0
+    
+- name: "install Let's Encrypt client"
+  apt: pkg=letsencrypt state=latest
+
+- name: "create config directories for Let's Encrypt client"
+  file: path="{{ letsencrypt.config_dir }}" state=directory
+
+- name: "create directory for Let's Encrypt webroot authenticator"
+  file: path="{{ letsencrypt.docroot }}" state=directory
+  when: letsencrypt.docroot is defined
+    
+- name: "configure Let's Encrypt client"
+  template: src=letsencrypt.ini.j2 dest="{{ letsencrypt.config }}"
+
+- name: schedule cron job for certificates renew
+  cron:
+    name: "letsencrypt_{{ letsencrypt.vhostid }}_renew"
+    special_time: monthly
+    job: >
+      letsencrypt certonly
+      --non-interactive
+      --agree-tos
+      --config "{{ letsencrypt.config }}"
+      --keep-until-expiring
+      && {{ letsencrypt.exec_after_renew }}
+
+- name: check if certificates exists
+  stat: path="{{ letsencrypt.certs_dir }}/fullchain.pem"
+  register: letsencrypt_certs
+
+- set_fact:
+    letsencrypt_stage: 2
+  when: letsencrypt_certs.stat.exists

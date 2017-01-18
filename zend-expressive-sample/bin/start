@@ -1,0 +1,10 @@
+#!/usr/bin/php
+<?php
+chdir(dirname(__DIR__));
+
+$port               = getenv('PORT') ?: 80;
+$entryPointScript   = getcwd() . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'index.php';
+$startServerPattern = '/usr/bin/php -S 0.0.0.0:%s %s';
+
+echo 'Starting PHP Server on port ' . $port . PHP_EOL;
+passthru(sprintf($startServerPattern, $port, $entryPointScript));

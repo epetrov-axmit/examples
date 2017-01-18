@@ -1,0 +1,30 @@
+---
+- name: check if letsencrypt certificate was already issued
+  stat: path="{{ haproxy.cert_path }}"
+  register: haproxy_cert
+
+- meta: flush_handlers
+  
+- block:
+    - name: request new certificate
+      shell: "{{ letsencrypt.issue_cmd }}"
+
+    - name: ensure there is a directory for haproxy certs
+      file: path="{{ haproxy.cert_path | dirname }}" state=directory
+      
+    - name: assemble cert file recognizable by HAProxy
+      shell: "cat fullchain.pem privkey.pem > {{ haproxy.cert_path }}"
+      args:
+        chdir: "{{ letsencrypt.certs_dir }}"
+
+    - name: ensure SSL certificate is not world readable
+      file: path="{{ haproxy.cert_path }}" owner=haproxy mode=0600
+        
+    - set_fact:
+        letsencrypt_stage: 1
+        
+    - name: enable binding to the SSL port in HAProxy config
+      template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+      notify: restart haproxy
+
+  when: letsencrypt_stage < 2

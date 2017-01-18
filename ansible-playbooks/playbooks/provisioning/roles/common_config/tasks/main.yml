@@ -1,0 +1,23 @@
+---
+- name: install basic system packages
+  apt: pkg="{{ item }}" state=latest update_cache=yes
+  with_items:
+    - curl
+    - wget
+    - python-software-properties
+    - apt-transport-https
+    
+- name: "set the server's timezone"
+  copy: content="{{ timezone }}" dest=/etc/timezone
+
+- name: "update the server's zoneinfo according to the specified timezone"
+  file: src="/usr/share/zoneinfo/{{ timezone }}" dest=/etc/localtime state=link force=yes backup=yes
+  register: timezone_update
+  
+- name: ensure syslog applied the timezone setting
+  service: name=syslog state=restarted
+  when: timezone_update.changed
+
+- name: compile your favorite locale on target host
+  shell: "locale-gen {{ locale }}"
+  when: ansible_distribution == "Ubuntu"

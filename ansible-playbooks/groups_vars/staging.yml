@@ -1,0 +1,14 @@
+---
+app_db:
+  host: localhost
+
+app_memcached:
+  host: 127.0.0.1
+  memory_limit: 128
+
+app_hostname: stage.example.com
+
+app_sesscookie_name: EXAMPLE_STG_SESS
+
+mariadb:
+  user_host: localhost

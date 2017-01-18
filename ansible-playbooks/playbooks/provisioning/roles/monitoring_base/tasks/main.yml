@@ -1,0 +1,21 @@
+---
+- name: install monitoring tools
+  apt: pkg=collectd-core state=latest
+
+- name: ensure collectd service is enabled
+  service: name=collectd enabled=yes
+
+- name: create directory for collectd plugins configurtion
+  file: path=/etc/collectd/collectd.conf.d state=directory
+  
+- name: write collectd initial config
+  template: src=collectd.conf.j2 dest=/etc/collectd/collectd.conf
+  notify: restart collectd
+
+- name: ensure custom types database exists
+  file: path=/etc/collectd/my_types.db state=touch
+
+- name: configure local collectd to send metrics to some remote collectd reciever
+  template: src=network_out.conf.j2 dest=/etc/collectd/collectd.conf.d/network_out.conf
+  notify: restart collectd
+  when: collectd_remote_ip is defined

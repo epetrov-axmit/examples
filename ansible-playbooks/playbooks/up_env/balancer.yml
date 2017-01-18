@@ -1,0 +1,22 @@
+---
+- hosts: [haproxy]
+  become: yes
+  vars:
+    letsencrypt:
+      standalone_port: 54321
+      config_dir: /etc/letsencrypt
+      vhostid: example
+      email: webmaster@axmit.com
+      domains:
+        - example.com
+      exec_after_renew: >
+        (cd /etc/letsencrypt/live/example.com;
+        cat fullchain.pem privkey.pem > /etc/haproxy/certs/example.pem;
+        systemctl reload haproxy.service)
+            
+    haproxy:
+      cert_path: "/etc/haproxy/certs/example.pem"
+      
+  roles:
+    - letsencrypt
+    - haproxy

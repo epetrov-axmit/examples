@@ -1,0 +1,8 @@
+---
+- name: install using apt
+  apt: name=haproxy state=present
+
+- include: configure.yml
+  
+- include: letsencrypt.yml
+  when: letsencrypt is defined

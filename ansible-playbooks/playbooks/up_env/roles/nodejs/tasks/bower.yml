@@ -1,0 +1,5 @@
+---
+- name: NPM | Install Bower
+  shell: npm install bower -g
+  args:
+    creates: /usr/bin/bower

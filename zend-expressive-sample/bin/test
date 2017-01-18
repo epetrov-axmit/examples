@@ -1,0 +1,13 @@
+#!/usr/bin/php
+<?php
+chdir(dirname(__DIR__));
+
+$phpunitBin             = 'vendor/bin/phpunit';
+$runTestsCommandPattern = '%s/%s';
+
+if (!is_executable($phpunitBin)) {
+    echo 'PHPUnit executable not found. Install composer dependencies first, run ./bin/setup' . PHP_EOL;
+    die;
+}
+
+passthru(sprintf($runTestsCommandPattern, getcwd(), $phpunitBin));

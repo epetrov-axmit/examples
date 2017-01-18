@@ -1,0 +1,23 @@
+- name: create directory for MariaDB dumps
+  file: path={{ mariadb_backup.dump_dir }} state=directory
+
+- name: schedule dumping MariaDB databases
+  template: src=dbdump.mysql.j2 dest=/etc/backup.d/10-db_dump.mysql mode=0600
+  
+- include: s3_db_arch.yml
+  vars:
+    task_file: 20-hourly_db_archive.dup
+    when: hourly
+    period_name: hourly
+    increments: 1
+    keep: 1
+    keep_incr_of_fulls: 1
+    
+- include: s3_db_arch.yml
+  vars:
+    task_file: 30-daily_db_archive.dup
+    when: "everyday at 01:00"
+    period_name: daily
+    increments: 7
+    keep: 30
+    keep_incr_of_fulls: 1

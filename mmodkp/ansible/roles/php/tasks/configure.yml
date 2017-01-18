@@ -1,0 +1,37 @@
+---
+- name: Create session save_path directory
+  file: path={{ php.settings.session.save_path }} state=directory mode=0755
+  when: php.settings.session.save_handler == 'files'
+
+- name: Configure session variables
+  ini_file:
+    dest: /etc/php/7.0/fpm/php.ini
+    section: Session
+    option: "session.{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_dict: "{{ php.settings.session }}"
+  notify: restart php7.0-fpm
+
+- name: Opcache config
+  ini_file:
+    dest: /etc/php/7.0/mods-available/opcache.ini
+    section: "zend opcache"
+    option: "opcache.{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_dict: "{{ php.settings.opcache }}"
+  notify: restart php7.0-fpm
+
+- stat: path=/etc/php/7.0/fpm/php.ini
+  register: phpfpm
+
+- stat: path=/etc/php/7.0/cli/php.ini
+  register: phpcli
+
+- include: php-fpm.yml
+  when: phpfpm.stat.exists
+
+- include: php-cli.yml
+  when: phpcli.stat.exists
+

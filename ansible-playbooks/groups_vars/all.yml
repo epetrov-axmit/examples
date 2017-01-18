@@ -1,0 +1,36 @@
+---
+timezone: Europe/Moscow
+locale: ru_RU.UTF-8
+
+app_db:
+  name: example_db
+  user: example_db_user
+  password: "EXAMPLE_DATABASE_PASSWORD"
+
+collectd_remote_ip: 127.0.0.1
+
+php:
+  packages: [php7.0-cli, php7.0-intl, php7.0-mcrypt, php7.0-mbstring, php7.0-curl, php7.0-common, php7.0-gd, php7.0-mysql, php7.0-zip, php-pear, php-memcached]
+  fpm:
+    logfile: '/var/log/php-fpm.access.log'
+    slowlog: '/var/log/php-fpm.log.slow'
+  settings:
+    session:
+      name: "{{ app_sesscookie_name }}"
+      save_handler: memcached
+      save_path: "{{ app_memcached.host }}:{{ app_memcached.port | default('11211')}}"
+      cookie_domain: "{{ app_hostname }}"
+    opcache:
+      enabled: 1
+      memory_consumption: 128
+      max_accelerated_files: 10000
+      max_wasted_percentage: 10
+      validate_timestamps: 0
+
+deploy_user:
+  login: deploy
+  password: ''
+  authorized_keys:
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDjM28/MxfmWKKFa3uyAPAfSRzX1Qwc6j8wrK5T81Q0hnPB1+1h21MGr34EB9t3qVmDl2lHlf7K6OhzOZROtbKo/SRl0/vWGSpdHLCmFO5AhZEj/fMftixkTgDvprvytH/711UTDudmHPiVhfr9991xlqgaS/w4a9MUj6js6eeIwVuuhgIUQX8gBdaWyCjQJYeWY/LLAfZhMe6gOtGoXt70N0RluLd99yYE54dAQrTvcCsuGS+Yn16ZRqjktJqtoXeS+I1rT1ycxZpyyqQQJM6MvBQxrRTe4YtW1uf5CmYbzZLxUNkVhoRWRyE7RYo0rRZfLYG1mBGb+xjSTQWIinJt Deploy User"
+  permitted_commands:
+    - "/usr/sbin/service"

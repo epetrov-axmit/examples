@@ -1,0 +1,2 @@
+- name: "schedule and config archiving MariaDB {{ period_name }} dumps to S3"
+  template: src=s3_db_arch.dup.j2 dest="/etc/backup.d/{{ task_file }}" mode=0600

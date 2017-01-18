@@ -1,0 +1,14 @@
+---
+- name: create deploy user
+  user:
+    name: "{{ deploy_user.login }}"
+    state: present
+    groups: ""
+    password: "{{ deploy_user.password }}"
+    
+- name: "authorize deploy user's ssh public key"
+  authorized_key: "user={{ deploy_user.login }} key={{ item }}"
+  with_items: "{{ deploy_user.authorized_keys }}"
+
+- name: "allow deploy user to run some commands as superuser"
+  template: src="deploy_sudoers.j2" dest="/etc/sudoers.d/99_deploy" mode=0440

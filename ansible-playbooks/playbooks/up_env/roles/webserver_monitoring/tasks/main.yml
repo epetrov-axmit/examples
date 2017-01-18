@@ -1,0 +1,34 @@
+---
+- name: ensure status url is enabled in all pools
+  lineinfile: dest={{ item }} regexp="^pm.status_path" line="pm.status_path = /status"
+  with_fileglob:
+    - /etc/php/7.0/fpm/pool.d/*
+
+- name: create nginx vhost for stats access
+  copy: src=status.conf.nginx dest=/etc/nginx/sites-available/status.conf
+  
+- name: enable php-fpm and nginx stats access
+  file: src=/etc/nginx/sites-available/status.conf path=/etc/nginx/sites-enabled/99_status.conf state=link
+  notify: restart nginx
+
+- name: enable custom types in collectd
+  blockinfile:
+    dest: /etc/collectd/my_types.db
+    block: |
+      phpfpm_listen_queue  value:GAUGE:0:65535
+      phpfpm_processes     value:GAUGE:0:65535
+      phpfpm_requests      value:DERIVE:0:U
+      phpfpm_slow_requests value:DERIVE:0:U
+  notify: restart collectd
+
+- name: install curl_json collectd plugin dependencies
+  apt: pkg=libyajl2 state=latest
+  notify: restart collectd
+  
+- name: enable php-fpm status plugin in collectd
+  copy: src=php-fpm.conf.collectd dest=/etc/collectd/collectd.conf.d/php-fpm.conf
+  notify: restart collectd
+  
+- name: enable nginx status plugin in collectd
+  copy: src=nginx.conf.collectd dest=/etc/collectd/collectd.conf.d/nginx.conf
+  notify: restart collectd

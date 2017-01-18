@@ -1,0 +1,15 @@
+---
+- meta: flush_handlers
+
+- block:
+    - name: request new certificate
+      shell: "{{ letsencrypt.issue_cmd }}"
+
+    - set_fact:
+        letsencrypt_stage: 1
+      
+    - name: enable binding to the SSL port in nginx config
+      template: src=default.tpl dest=/etc/nginx/sites-available/default
+      notify: restart nginx
+      
+  when: letsencrypt_stage < 2

@@ -1,0 +1,6 @@
+---
+admins:
+  - name: admin
+    password: '$6$4DuzHcWkzNeTb$Je5iQ.VL6/c1E9poP28ELJrALAQop40WcwWWF3qUnZqhVmz4FGqM7Fjp9WdkgxzOIF7nZcK5NkXvsvE3ThPK30'
+    authorized_keys:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDjM28/MxfmWKKFa3uyAPAfSRzX1Qwc6j8wrK5T81Q0hnPB1+1h21MGr34EB9t3qVmDl2lHlf7K6OhzOZROtbKo/SRl0/vWGSpdHLCmFO5AhZEj/fMftixkTgDvprvytH/711UTDudmHPiVhfr9991xlqgaS/w4a9MUj6js6eeIwVuuhgIUQX8gBdaWyCjQJYeWY/LLAfZhMe6gOtGoXt70N0RluLd99yYE54dAQrTvcCsuGS+Yn16ZRqjktJqtoXeS+I1rT1ycxZpyyqQQJM6MvBQxrRTe4YtW1uf5CmYbzZLxUNkVhoRWRyE7RYo0rRZfLYG1mBGb+xjSTQWIinJt John Smith"

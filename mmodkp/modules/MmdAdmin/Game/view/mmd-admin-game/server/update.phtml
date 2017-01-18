@@ -1,0 +1,20 @@
+<?php
+
+use Mmd\Game\Form\ServerEditForm;
+
+$title = $this->translate(sprintf('Редактировать сервер %s', $this->server->getName()));
+$this->headTitle($title);
+
+/** @var ServerEditForm $form */
+$form = $this->form;
+$form->setAttribute('action', $this->url('admin/server', ['action' => 'update', 'id' => $this->server->getId()]));
+$form->prepare();
+
+?>
+
+<div class="col-md-4 col-md-offset-4">
+    <?php if (!empty($this->success)) : ?>
+        <div class="alert alert-success"><?php echo $this->success; ?></div>
+    <?php endif; ?>
+    <?php echo $this->adminServerEditForm($form); ?>
+</div>

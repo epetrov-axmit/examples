@@ -1,0 +1,50 @@
+<?php
+
+use Epos\Dao\Criterion\Filter;
+use Mmd\Game\Form\ServerFilterForm;
+
+/** @var ServerFilterForm $form */
+$helper = $this->mmdDefaultForm($form);
+$form->setAttributes(['class' => '', 'method' => 'GET']);
+?>
+
+<?= $helper->formOpen(); ?>
+<div class="row m-b-10">
+    <div class="col-md-2">
+        <?= $helper->element(
+            ServerFilterForm::ELEMENT_NAME,
+            [
+                'class'       => 'form-control input-sm',
+                'placeholder' => $form->get(ServerFilterForm::ELEMENT_NAME)->getLabel(),
+            ]
+        ); ?>
+    </div>
+    <div class="col-md-2">
+        <?= $helper->element(
+            ServerFilterForm::ELEMENT_URL,
+            [
+                'class'       => 'form-control input-sm',
+                'placeholder' => $form->get(ServerFilterForm::ELEMENT_URL)->getLabel(),
+            ]
+        ); ?>
+    </div>
+    <div class="col-md-2">
+        <?= $helper->element(
+            ServerFilterForm::ELEMENT_GAME,
+            [
+                'class'       => 'form-control input-sm',
+                'placeholder' => $form->get(ServerFilterForm::ELEMENT_GAME)->getLabel(),
+            ]
+        ); ?>
+    </div>
+    <div class="col-md-offset-1 col-md-5 text-right">
+        <?= $this->partial('partial/sortable-form-group', ['form' => $form->get(Filter::SORT_PARAMETER_NAME)]); ?>
+    </div>
+</div>
+<div class="row m-b-10">
+    <div class="col-md-offset-8 col-md-4 text-right">
+        <a href="<?= $form->getAttribute('action') ?>" class="btn btn-sm"><?= $this->translate('Сбросить'); ?></a>
+        <?= $helper->element(ServerFilterForm::ELEMENT_SUBMIT, ['class' => 'btn btn-sm']); ?>
+    </div>
+</div>
+<?= $helper->formClose(); ?>

@@ -1,0 +1,26 @@
+- name: Install Composer
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer creates=/usr/local/bin/composer
+
+- name: Adjusting composer swap
+  become: yes
+  become_method: sudo
+  shell: "{{ item }}"
+  with_items:
+    - swapoff -a
+    - /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
+    - /sbin/mkswap /var/swap.1
+    - /sbin/swapon /var/swap.1
+
+- name: Composer local env settings
+  include_vars: "{{ composer.local_vars }}"
+  when: composer.local_vars
+
+- name: Checking composer cache directory
+  file: path="{{ composer.settings.cache_dir }}" state=directory mode=0777
+  environment:
+    COMPOSER_CACHE_DIR: "{{ composer.settings.cache_dir }}"
+  when: composer.settings.cache_dir
+
+- name: Setting up github OAuth token
+  shell: composer config -g github-oauth.github.com "{{ composer.settings.github_token }}"
+  when: composer.settings.github_token

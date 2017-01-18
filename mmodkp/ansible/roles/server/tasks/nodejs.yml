@@ -1,0 +1,16 @@
+---
+- name: NodeJS | Add repo key
+  sudo: yes
+  apt_key: keyserver=keyserver.ubuntu.com id=68576280
+
+- name: NodeJS | Add NodeJS repository
+  sudo: yes
+  apt_repository: repo="deb https://deb.nodesource.com/node_6.x {{ ansible_distribution_release }} main" state=present
+
+- name: Update apt
+  sudo: yes
+  apt: update_cache=yes
+
+- name: NodeJS | Installing NodeJS
+  sudo: yes
+  apt: pkg=nodejs state=latest

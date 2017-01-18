@@ -1,0 +1,12 @@
+LoadPlugin mysql
+
+<Plugin mysql>
+{% for db in mariadb_stat_databases %}
+       <Database "{{ db }}">
+               Host "localhost"
+#               Socket "/var/run/mysqld/mysqld.sock"
+               User "{{ mariadb_stat_user }}"
+               Password "{{ mariadb_stat_password }}"
+       </Database>
+{% endfor %}       
+</Plugin>

@@ -1,0 +1,14 @@
+---
+app_db:
+  host: 127.0.0.2
+
+app_memcached:
+  host: 127.0.0.3
+  memory_limit: 128
+
+app_hostname: example.com
+
+app_sesscookie_name: EXAMPLE_SESS
+
+mariadb:
+  user_host: "127.0.%"

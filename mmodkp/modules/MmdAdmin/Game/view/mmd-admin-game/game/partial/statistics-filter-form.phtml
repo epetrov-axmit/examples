@@ -1,0 +1,28 @@
+<?php
+
+use Epos\Dao\Criterion\Filter;
+use MmdAdmin\Game\Statistics\Form\GameStatisticsFilterForm;
+use MmdAdmin\Game\Statistics\View\Form\Helper\GameStatisticsFilterForm as FormHelper;
+
+/** @var GameStatisticsFilterForm $form */
+$form = $this->form;
+$form->setAttribute('action', $this->url('admin/game', ['action' => 'statistics']));
+$form->prepare();
+
+/** @var FormHelper $helper */
+$helper = $this->mmdGameStatisticsFilterForm($form);
+?>
+<div class="row">
+    <?= $helper->formOpen() ?>
+    <div class="col-md-2"><?= $helper->element(GameStatisticsFilterForm::ELEMENT_GAME); ?></div>
+    <div class="form-group col-md-8">
+        <?= $this->partial('partial/sortable-form-group', ['form' => $form->get(Filter::SORT_PARAMETER_NAME)]); ?>
+    </div>
+    <div class="col-md-2 text-right">
+        <a href="<?= $form->getAttribute('action'); ?>" class="btn btn-sm">
+            <?= $this->translate('Cancel'); ?>
+        </a>
+        <?= $helper->element(GameStatisticsFilterForm::ELEMENT_SUBMIT); ?>
+    </div>
+    <?= $helper->formClose() ?>
+</div>
